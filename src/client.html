@@ -7,6 +7,7 @@
     <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
     <link href="../dist/output.css" rel="stylesheet">
 
+
 </head>
 
 <body class="client h-screen w-screen  bg-gradient-to-r from-cyan-500 to-blue-500">
@@ -17,8 +18,12 @@
             class="w-6 h-6 transition-all duration-500 origin-center opacity-1">
         <img src="../assets/icons/close.svg" alt="" srcset="" id="close_chat_img"
             class="close_chat_img w-0 h-0  transition-all duration-500 origin-center opacity-0">
+        <span class="tooltiptext transition-all duration-1000  ">We are available!</span>
     </button>
 
+
+    <!--  -->
+    <!--  -->
     <div
         class="fixed bottom-20 right-2 w-0 h-0 shadow-sm rounded-lg text-white text-center transition-all duration-500 origin-bottom-right bg-white opacity-0 flex flex-col overflow-hidden chat_container">
         <div class="window_header w-full bg-green-600 rounded-tl-md rounded-tr-md py-2">
@@ -74,164 +79,188 @@
     </div>
     <!-- Pusher initialisation -->
     <script>
-        // Add API Key & cluster here to make the connection 
-        var pusher = new Pusher('35475b12a7cc14bf25c9', {
-            cluster: 'eu',
-            encrypted: true
-        });
-        const clientId = Math.floor(Math.random() * 100000000000)
-        let private_event = 'private' + clientId + '_event'
-        let new_client_channel = pusher.subscribe('new_client_chat');
-        document.querySelector('.input_send').dataset.p_event = private_event
-        // bind the server event to get the response data and append it to the message div
-        new_client_channel.bind(private_event,
-            function (operatorData) {
-                console.log(operatorData);
-                if (operatorData['from'] === 'operator' && operatorData['private-event'] === private_event) {
-                    const chatRow = document.createElement('div')
-                    chatRow.className = 'chat_row from_operator relative flex justify-end align-middle mb-4'
-
-                    const operatorMsg = document.createElement('p')
-                    operatorMsg.innerText = 'Operator : ' + operatorData['message']
-                    operatorMsg.className = 'pr-7 font-thin'
-
-                    chatRow.appendChild(operatorMsg)
-
-                    document.querySelector('.messages_display').appendChild(chatRow)
-                    //$('.messages_display').append('<p class = "message_item from_operator">Operator : ' + data['message'] + '</p>');
-                }
-
+        let private_event
+        window.addEventListener('load', function () {
+            // Add API Key & cluster here to make the connection 
+            var pusher = new Pusher('35475b12a7cc14bf25c9', {
+                cluster: 'eu',
+                encrypted: true
             });
+            const clientId = Math.floor(Math.random() * 100000000000)
+            private_event = 'private' + clientId + '_event'
+            let new_client_channel = pusher.subscribe('new_client_chat');
+            document.querySelector('.input_send').dataset.p_event = private_event
+            // bind the server event to get the response data and append it to the message div
+            new_client_channel.bind(private_event,
+                function (operatorData) {
+                    console.log(operatorData);
+                    if (operatorData['from'] === 'operator' && operatorData['private-event'] === private_event) {
+                        const chatRow = document.createElement('div')
+                        chatRow.className = 'chat_row from_operator relative flex justify-end align-middle mb-4'
 
-        // check if the user is subscribed to the above channel
-        new_client_channel.bind('pusher:subscription_succeeded', function (members) {
-            console.log('successfully subscribed!');
-        });
+                        const operatorMsg = document.createElement('p')
+                        operatorMsg.innerText = 'Operator : ' + operatorData['message']
+                        operatorMsg.className = 'pr-7 font-thin'
 
+                        chatRow.appendChild(operatorMsg)
+
+                        document.querySelector('.messages_display').appendChild(chatRow)
+                        document.querySelector('.messages_display').lastChild.scrollIntoView();
+                        //$('.messages_display').append('<p class = "message_item from_operator">Operator : ' + data['message'] + '</p>');
+                    }
+
+                });
+
+            // check if the user is subscribed to the above channel
+            new_client_channel.bind('pusher:subscription_succeeded', function (members) {
+                console.log('successfully subscribed!');
+            });
+        })
     </script>
     <script>
-        /* ***************************************** */
-        /* Open chat prompt */
-        /* ***************************************** */
-        document.querySelector('#chat_btn').addEventListener('click', () => {
-            if (document.querySelector('#chat_btn').classList.contains('chat_c_opened')) {
-                document.querySelector('#chat_btn').classList.remove('chat_c_opened')
-                document.querySelector('.chat_container').classList.add('w-0', 'h-0', 'opacity-0')
-                document.querySelector('.chat_container').classList.remove('opacity-1', 'w-80', 'h-96')
+        window.addEventListener('load', function () {
+            let canChat = false
+            checkIfOperatorIsAvailable('op_status.php')
 
-                /* Switch icons */
-                document.querySelector('#open_chat_img').classList.add('opacity-1', 'w-6', 'h-6')
-                document.querySelector('#open_chat_img').classList.remove('opacity-0', 'w-0', 'h-0')
-                document.querySelector('#close_chat_img').classList.remove('opacity-1', 'w-5', 'h-5')
-                document.querySelector('#close_chat_img').classList.add('opacity-0', 'w-0', 'h-0')
-            } else {
-                document.querySelector('#chat_btn').classList.add('chat_c_opened')
-                document.querySelector('.chat_container').classList.remove('w-0', 'h-0', 'opacity-0')
-                document.querySelector('.chat_container').classList.add('opacity-1', 'w-80', 'h-96')
-                /* Switch icons */
-                document.querySelector('#open_chat_img').classList.remove('opacity-1', 'w-6', 'h-6')
-                document.querySelector('#open_chat_img').classList.add('opacity-0', 'w-0', 'h-0')
-                document.querySelector('#close_chat_img').classList.add('opacity-1', 'w-5', 'h-5')
-                document.querySelector('#close_chat_img').classList.remove('opacity-0', 'w-0', 'h-0')
+            /* ***************************************** */
+            /* Open chat prompt */
+            /* ***************************************** */
+            document.querySelector('#chat_btn').addEventListener('click', () => {
+                if (document.querySelector('#chat_btn').classList.contains('chat_c_opened')) {
+                    document.querySelector('#chat_btn').classList.remove('chat_c_opened')
+                    document.querySelector('.chat_container').classList.add('w-0', 'h-0', 'opacity-0')
+                    document.querySelector('.chat_container').classList.remove('opacity-1', 'w-80', 'h-96')
+
+                    /* Switch icons */
+                    document.querySelector('#open_chat_img').classList.add('opacity-1', 'w-6', 'h-6')
+                    document.querySelector('#open_chat_img').classList.remove('opacity-0', 'w-0', 'h-0')
+                    document.querySelector('#close_chat_img').classList.remove('opacity-1', 'w-5', 'h-5')
+                    document.querySelector('#close_chat_img').classList.add('opacity-0', 'w-0', 'h-0')
+                } else {
+                    document.querySelector('#chat_btn').classList.add('chat_c_opened')
+                    document.querySelector('.chat_container').classList.remove('w-0', 'h-0', 'opacity-0')
+                    document.querySelector('.chat_container').classList.add('opacity-1', 'w-80', 'h-96')
+                    /* Switch icons */
+                    document.querySelector('#open_chat_img').classList.remove('opacity-1', 'w-6', 'h-6')
+                    document.querySelector('#open_chat_img').classList.add('opacity-0', 'w-0', 'h-0')
+                    document.querySelector('#close_chat_img').classList.add('opacity-1', 'w-5', 'h-5')
+                    document.querySelector('#close_chat_img').classList.remove('opacity-0', 'w-0', 'h-0')
+                    document.querySelector('.tooltiptext').classList.remove('available')
+                }
+
+            })
+            /* ***************************************** */
+            /* Ajax Call function */
+            /* ***************************************** */
+            function checkIfOperatorIsAvailable(ajax_url) {
+                fetch(ajax_url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.operator == "available") {
+                            //document.querySelector('.tooltiptext').classList.remove('hidden')
+                            document.querySelector('.tooltiptext').classList.add('available')
+                            canChat = true
+                        }
+                    });
             }
+            function ajaxCall(ajax_url, ajax_data) {
+                fetch(ajax_url, {
+                    mode: 'cors', credentials: 'same-origin',
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(ajax_data)
+                })
+                /*  .then((response) => console.log(response))
+                 .then((data) => console.log(data)); */
+            }
+            /* ***************************************** */
+            /* Request Chat */
+            /* ***************************************** */
+            document.querySelector('.request_chat').addEventListener('click', (e) => {
+                e.preventDefault();
+                let name = ""
+                let message = ""
+                message = document.querySelector('.chat_box .input_message').value
+                name = document.querySelector('.chat_box .input_name').value
+                // Validate Name field
+                /* if (name === '') {
+                    bootbox.alert('<br /><p class = "bg-danger">Please enter a Name.</p>');
+                } */
+
+                if (message !== '') {
+                    // Define ajax data
+                    let chat_request = {
+                        type: 'request_chat',
+                        name: name,
+                        message: message,
+                        //private_channel: private_channel,
+                        private_event: private_event
+                    }
+                    /* If operator is available and canChat = true */
+                    if (canChat == true) {
+                        //ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
+                        document.querySelector('#request_window').style.display = "none"
+                        document.querySelector('#chat_window').classList.remove('hidden')
+                        document.querySelector('#chat_window').classList.add('flex')
+                        //$('.messages_display').append('<p class = "message_item">' + name + ' : ' + message + '</p>');
+                        /* Change this to a function => reusable component */
+                        const chatRowClient = document.createElement('div')
+                        chatRowClient.className = 'chat_row relative from_client flex mb-4'
+
+                        const clientMsg = document.createElement('p')
+                        clientMsg.innerText = 'Client : ' + message
+                        clientMsg.className = 'pl-7'
+
+                        chatRowClient.appendChild(clientMsg)
+
+                        document.querySelector('.messages_display').appendChild(chatRowClient)
+                    }else{
+                        console.log("no one available")
+                    }
+
+
+                    // Clear the message input field
+                    //$('.chat_box .input_message').val('');
+                }
+            });
+            /* ***************************************** */
+            /* Chatting */
+            /* ***************************************** */
+            /*  if (canChat) { */
+            document.querySelector('.input_send').addEventListener('click', (e) => {
+                e.preventDefault();
+                let privateEvent = document.querySelector('.input_send').dataset.p_event
+                let message = document.querySelector('#chat_window .chat_message').value
+                console.log(message)
+                if (message !== '') {
+                    // Define ajax data
+                    let chat_request = {
+                        from: 'client',
+                        type: 'private',
+                        name: name,
+                        message: message,
+                        private_event: privateEvent
+                    }
+                    //ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
+                    const chatRowClient = document.createElement('div')
+                    chatRowClient.className = 'chat_row relative from_client flex mb-4'
+
+                    const clientMsg = document.createElement('p')
+                    clientMsg.innerText = 'Client : ' + message
+                    clientMsg.className = 'pl-7'
+
+                    chatRowClient.appendChild(clientMsg)
+
+                    document.querySelector('.messages_display').appendChild(chatRowClient)
+                    document.querySelector('.messages_display').lastChild.scrollIntoView();
+                }
+            })
+            /* } */
 
         })
-        /* ***************************************** */
-        /* Ajax Call function */
-        /* ***************************************** */
-        function ajaxCall(ajax_url, ajax_data) {
-            fetch(ajax_url, {
-                mode: 'cors', credentials: 'same-origin',
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(ajax_data)
-            })
-            /*  .then((response) => console.log(response))
-             .then((data) => console.log(data)); */
-        }
-        /* ***************************************** */
-        /* Request Chat */
-        /* ***************************************** */
-        document.querySelector('.request_chat').addEventListener('click', (e) => {
-            e.preventDefault();
-            let name = ""
-            let message = ""
-            message = document.querySelector('.chat_box .input_message').value
-            name = document.querySelector('.chat_box .input_name').value
-            // Validate Name field
-            /* if (name === '') {
-                bootbox.alert('<br /><p class = "bg-danger">Please enter a Name.</p>');
-            } */
-
-            if (message !== '') {
-                // Define ajax data
-                let chat_request = {
-                    type: 'request_chat',
-                    name: name,
-                    message: message,
-                    //private_channel: private_channel,
-                    private_event: private_event
-                }
-                // Send the message to the server passing File Url and chat person name & message
-                ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
-                document.querySelector('#request_window').style.display = "none"
-                document.querySelector('#chat_window').classList.remove('hidden')
-                document.querySelector('#chat_window').classList.add('flex')
-                //$('.messages_display').append('<p class = "message_item">' + name + ' : ' + message + '</p>');
-                /* Change this to a function => reusable component */
-                const chatRowClient = document.createElement('div')
-                chatRowClient.className = 'chat_row relative from_client flex mb-4'
-
-                const clientMsg = document.createElement('p')
-                clientMsg.innerText = 'Client : ' + message
-                clientMsg.className = 'pl-7'
-
-                chatRowClient.appendChild(clientMsg)
-
-                document.querySelector('.messages_display').appendChild(chatRowClient)
-
-
-
-
-
-                // Clear the message input field
-                //$('.chat_box .input_message').val('');
-            }
-        });
-        /* ***************************************** */
-        /* Chatting */
-        /* ***************************************** */
-        document.querySelector('.input_send').addEventListener('click', (e) => {
-            e.preventDefault();
-            let privateEvent = document.querySelector('.input_send').dataset.p_event
-            let message = document.querySelector('#chat_window .chat_message').value
-
-            if (message !== '') {
-                // Define ajax data
-                let chat_request = {
-                    from: 'client',
-                    type: 'private',
-                    name: name,
-                    message: message,
-                    private_event: privateEvent
-                }
-                ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
-                const chatRowClient = document.createElement('div')
-                chatRowClient.className = 'chat_row relative from_client flex mb-4'
-
-                const clientMsg = document.createElement('p')
-                clientMsg.innerText = 'Client : ' + message
-                clientMsg.className = 'pl-7'
-
-                chatRowClient.appendChild(clientMsg)
-
-                document.querySelector('.messages_display').appendChild(chatRowClient)
-            }
-        }).bind(this)
-
     </script>
 
 </body>
