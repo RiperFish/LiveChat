@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <link href="../dist/output.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="relative overflow-hidden bg-gray-100 dashboard_wrapper">
+        <div class="flex text-sm">
+            <!-- Navigation -->
+            <div class="relative my-4 ml-4 shadow-sm block w-80">
+                <div class=" bg-white rounded-md h-full">
+                    <div class="pt-6">
+                        <nav class="mt-6 tab">
+                            <div>
+                                <a class="flex tablinks active items-center justify-start w-full p-4 my-2 font-medium text-blue-500 capitalize   bg-gradient-to-r from-white to-blue-100 "
+                                    href="#" data-id="clients_chats_wrapper"
+                                    onclick="openTab(event, 'clients_chats_wrapper')">
+                                    dashboard
+                                </a>
+                            </div>
+                            <!-- <div>
+                                <a class="flex tablinks items-center justify-start w-full p-4 my-2 font-medium text-blue-500 capitalize  bg-gradient-to-r from-white to-blue-100 "
+                                    href="#" onclick="openTab(event, 'test')">
+                                    test
+                                </a>
+                            </div> -->
+                        </nav>
+                    </div>
+
+                </div>
+            </div>
+            <div class="h-screen w-full pl-0 pt-4 pb-4 tabs_wrapper  grid grid-cols-3 tabcontent"
+                id="clients_chats_wrapper">
+
+            </div>
+            <!--  <div class="h-screen w-full pl-0 pt-4 pb-4 tabcontent" id="test">
+                <h1>Hey</h1>
+            </div> -->
+        </div>
+        </div>
+    </main>
+
+    <script>
+        const dashboardWrapper = document.querySelector('.dashboard_wrapper')
+        const tabsContentWrapper = document.querySelector('.tabs_wrapper')
+        //createNewClientTab("Mustapha", "ddd")
+        createNewClientTabContent("Mustapha", 'Mustaphas message', "ddd")
+
+        //createNewClientTab("Walid", "zzz")
+        createNewClientTabContent("Walid", 'Walids message', "zzz")
+        //createNewClientTabContent("name", "msg", "p_event")
+        /* ***************************************** */
+        /* Ajax Call function */
+        /* ***************************************** */
+        function ajaxCall(ajax_url, ajax_data) {
+            fetch(ajax_url, {
+                mode: 'cors', credentials: 'same-origin',
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ajax_data)
+            })
+            /*  .then((response) => console.log(response))
+             .then((data) => console.log(data)); */
+        }
+        /* ***************************************** */
+        /* Create elements functions */
+        /* ***************************************** */
+        function chatForm(name, p_event, first_msg) {
+            const formWrapper = document.createElement("div");
+            formWrapper.className = "chat_box"
+            formWrapper.dataset.p_event = p_event
+
+            const messagesDisplay = document.createElement("div");
+            messagesDisplay.className = "form-control messages_display w-full rounded-sm text-left p-2 border-l-2 px-4 pt-4 overflow-y-scroll h-80"
+
+            const chatRowClient = document.createElement('div')
+            chatRowClient.className = 'chat_row relative from_client flex mb-4 '
+
+            const firstMsg = document.createElement('p')
+            firstMsg.innerText = first_msg
+            firstMsg.innerText = 'Client : ' + first_msg
+            firstMsg.className = 'pl-7 font-thin '
+
+            chatRowClient.appendChild(firstMsg)
+            messagesDisplay.appendChild(chatRowClient)
+
+            /* Form */
+            const formRow = document.createElement('div')
+            formRow.className = "flex px-2"
+            
+            const wrapper1 = document.createElement('div')
+            wrapper1.className = "form-group rounded-md flex-1"
+            const wrapper2 = document.createElement('div')
+            wrapper2.className = "form-group input_send_holder rounded-md"
+
+            const messageInput = document.createElement('input')
+            messageInput.className = "input_message rounded-md w-full p-2 text-xs outline-none"
+            messageInput.placeholder = "Type your message here ..."
+            wrapper1.appendChild(messageInput)
+
+            const sendMsgBtn = document.createElement("input");
+            sendMsgBtn.className = "btn btn-primary btn-block input_send text-black rounded-md w-full h-full text-xs p-2 cursor-pointer"
+            sendMsgBtn.onclick = function () {
+                btnSendMail_Click(name, p_event)
+            };
+            sendMsgBtn.type = "submit"
+            sendMsgBtn.value = "Send"
+            sendMsgBtn.dataset.p_event = p_event
+            wrapper2.appendChild(sendMsgBtn)
+
+            formRow.appendChild(wrapper1)
+            formRow.appendChild(wrapper2)
+
+            formWrapper.appendChild(messagesDisplay)
+            formWrapper.appendChild(formRow)
+            return formWrapper
+        }
+        function btnSendMail_Click(name, p_event) {
+            console.log('Client : ' + name + '; Event : ' + p_event);
+            let clientForm = document.querySelector('.tabcontent.form_' + p_event)
+            let operatorNewMessage = document.querySelector('.form_' + p_event + ' .input_message').value
+            let chat_request = {
+                from: 'operator',
+                type: 'private',
+                name: "operator",
+                message: operatorNewMessage,
+                private_event: p_event
+            }
+            //ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request)
+            const chatRowOprator = document.createElement('div')
+            chatRowOprator.className = 'chat_row relative from_operator flex mb-4 justify-end'
+
+            const operatorMsg = document.createElement('p')
+            operatorMsg.innerText = 'Operator : ' + operatorNewMessage
+            operatorMsg.className = 'pl-7 '
+
+            chatRowOprator.appendChild(operatorMsg)
+
+            const clientOpWithClient = document.querySelector('.form_' + p_event + ' .messages_display')
+            clientOpWithClient.appendChild(chatRowOprator)
+            clientOpWithClient.lastChild.scrollIntoView(); 
+            //clientOpWithClient.scrollTop = clientOpWithClient.scrollHeight - clientOpWithClient.clientHeight;
+        }
+
+        function createNewClientTab(name, p_event) {
+            const tabElement = document.createElement("div");
+            const clientBtn = document.createElement("a");
+            clientBtn.className = "tablinks flex items-center justify-start w-full p-4 my-2 font-thin text-blue-500  border-r-4 border-blue-500 bg-gradient-to-r from-white to-blue-100"
+            clientBtn.innerText = name
+            clientBtn.dataset.p_event = p_event
+            clientBtn.onclick = function () {
+                openTab(event, name + 'Tab')
+            };
+            tabElement.appendChild(clientBtn);
+            document.querySelector(".tab").appendChild(tabElement);
+        }
+        function createNewClientTabContent(name, msg, p_event) {
+
+            const tabContent = document.createElement("div");
+            tabContent.className = "mx-4 h-full bg-white shadow-sm rounded-md form_" + p_event
+            tabContent.id = name + 'Tab'
+
+            const tabContentHeader = document.createElement('div')
+            tabContentHeader.innerText = "Chatting with : " + name
+            tabContentHeader.className = "flex items-center justify-start w-full p-2   text-blue-500 capitalize rounded-sm bg-gradient-to-r from-white to-blue-100"
+
+
+            tabContent.appendChild(tabContentHeader)
+            tabContent.appendChild(chatForm(name, p_event, msg))
+
+
+            tabsContentWrapper.appendChild(tabContent);
+        }
+        /* ***************************************** */
+        /* Switch between tabs */
+        /* ***************************************** */
+        function openTab(evt, cityName) {
+            console.log("clicked")
+            //let p_event = evt.target.dataset.p_event
+
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "grid";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+    <script type="text/javascript">
+
+        // Enable pusher logging - don't include this in production
+        //Pusher.logToConsole = true;
+
+        // Add API Key & cluster here to make the connection 
+        var pusher = new Pusher('35475b12a7cc14bf25c9', {
+            cluster: 'eu',
+            encrypted: true
+        });
+
+        // Enter a unique channel you wish your users to be subscribed in.
+        var new_client_channel = pusher.subscribe('new_client_chat');
+
+        // bind the server event to get the response data and append it to the message div
+        new_client_channel.bind('new_client_chat_event',
+            function (data) {
+                console.log(data);
+
+                if (data['type'] === "new") {
+                    //createNewClientTab(data['name'], data['private-event'])
+                    createNewClientTabContent(data['name'], data['message'], data['private-event'])
+                    //pusher.unsubscribe('new_client_chat');
+                }
+                new_client_channel.bind(data['private-event'],
+                    function (clientData) {
+                        //Receive message from client
+                        console.log(clientData);
+                        if (clientData['from'] === 'client' && clientData['private-event'] === data['private-event']) {
+                            const chatRowClient = document.createElement('div')
+                            chatRowClient.className = 'chat_row relative message_item from_client flex mb-4'
+
+                            const clientMsg = document.createElement('p')
+                            //clientMsg.innerText = first_msg
+                            clientMsg.innerText = 'Client : ' + clientData['message']
+                            clientMsg.className = 'pl-7'
+
+                            chatRowClient.appendChild(clientMsg)
+
+
+                            const clientOpWithClient = document.querySelector('.tabcontent.form_' + clientData['private-event'] + ' .messages_display')
+
+                            clientOpWithClient.appendChild(chatRowClient)
+                            clientOpWithClient.lastChild.scrollIntoView(); 
+                            //clientOpWithClient.scrollTop = clientOpWithClient.scrollHeight - clientOpWithClient.clientHeight;
+                        }
+                    });
+            });
+        // check if the user is subscribed to the above channel
+        new_client_channel.bind('pusher:subscription_succeeded', function (members) {
+            console.log('successfully subscribed!');
+        });
+
+    </script>
+</body>
+
+</html>

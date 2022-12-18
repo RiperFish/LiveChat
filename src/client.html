@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <link href="../dist/output.css" rel="stylesheet">
+
+</head>
+
+<body class="client h-screen w-screen  bg-gradient-to-r from-cyan-500 to-blue-500">
+    <button
+        class="text-black bg-blue-100 shadow-2xl rounded-full  w-14 h-14 fixed bottom-3 right-2 flex items-center justify-center"
+        id="chat_btn">
+        <img src="../assets/icons/chat.svg" alt="" srcset="" id="open_chat_img"
+            class="w-6 h-6 transition-all duration-500 origin-center opacity-1">
+        <img src="../assets/icons/close.svg" alt="" srcset="" id="close_chat_img"
+            class="close_chat_img w-0 h-0  transition-all duration-500 origin-center opacity-0">
+    </button>
+
+    <div
+        class="fixed bottom-20 right-2 w-0 h-0 shadow-sm rounded-lg text-white text-center transition-all duration-500 origin-bottom-right bg-white opacity-0 flex flex-col overflow-hidden chat_container">
+        <div class="window_header w-full bg-green-600 rounded-tl-md rounded-tr-md py-2">
+            <h3>Live chat support</h3>
+        </div>
+        <div class=" text-black text-xs text-left h-full">
+            <!-- Request Chat  -->
+            <div class="chat_box text-black text-sm p-4" id="request_window">
+                <p class="mb-3">You will be connected to a manager if one is available, otherwise, we will contact you
+                    by
+                    email.</p>
+
+                <div class="form-group border rounded-md mb-3">
+                    <input type="text" class="input_name form-control rounded-md w-full p-2 pt-2 text-xs"
+                        placeholder="Name" value="Mustapha" />
+                </div>
+                <div class="form-group border rounded-md">
+                    <input type="text" class="input_name form-control rounded-md w-full p-2 pt-2 text-xs"
+                        placeholder="Email" />
+                </div>
+                <div class="form-group mt-3 border rounded-md">
+                    <textarea class="input_message form-control w-full p-2 pt-2 rounded-md text-black text-xs"
+                        placeholder="Enter Message" rows="5" value="Test message"></textarea>
+                </div>
+                <div class="form-group input_send_holder mt-3 rounded-md">
+                    <input type="submit" value="Request"
+                        class="btn btn-primary btn-block request_chat text-black border rounded-md w-full text-xs pb-1 pt-1 cursor-pointer" />
+                </div>
+            </div>
+            <!-- Chat -->
+            <div class="form_container w-full h-full flex-col text-black text-xs hidden " id="chat_window">
+                <div class="form-control messages_display w-full  text-left p-2  px-4 pt-4 overflow-y-scroll">
+                    <!-- <div class="chat_row relative from_client flex mb-4">
+                        <p class="pl-7">hello, i can't do updates</p>
+                    </div>
+                    <div class="chat_row relative from_operator flex justify-end items-center mb-4">
+                        <p class="pr-7">hello, how i may help you</p>
+                    </div> -->
+                </div>
+                <div class="flex">
+                    <div class="form-group rounded-md flex-1">
+                        <input class="chat_message rounded-md w-full p-2 text-xs outline-none"
+                            placeholder="Enter Message" rows="3" value="Test message"></input>
+                    </div>
+                    <div class="form-group input_send_holder rounded-md ">
+                        <input type="submit" value="Send"
+                            class="btn btn-primary btn-block input_send text-black rounded-md w-full h-full text-xs p-2 cursor-pointer " />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Pusher initialisation -->
+    <script>
+        // Add API Key & cluster here to make the connection 
+        var pusher = new Pusher('35475b12a7cc14bf25c9', {
+            cluster: 'eu',
+            encrypted: true
+        });
+        const clientId = Math.floor(Math.random() * 100000000000)
+        let private_event = 'private' + clientId + '_event'
+        let new_client_channel = pusher.subscribe('new_client_chat');
+        document.querySelector('.input_send').dataset.p_event = private_event
+        // bind the server event to get the response data and append it to the message div
+        new_client_channel.bind(private_event,
+            function (operatorData) {
+                console.log(operatorData);
+                if (operatorData['from'] === 'operator' && operatorData['private-event'] === private_event) {
+                    const chatRow = document.createElement('div')
+                    chatRow.className = 'chat_row from_operator relative flex justify-end align-middle mb-4'
+
+                    const operatorMsg = document.createElement('p')
+                    operatorMsg.innerText = 'Operator : ' + operatorData['message']
+                    operatorMsg.className = 'pr-7 font-thin'
+
+                    chatRow.appendChild(operatorMsg)
+
+                    document.querySelector('.messages_display').appendChild(chatRow)
+                    //$('.messages_display').append('<p class = "message_item from_operator">Operator : ' + data['message'] + '</p>');
+                }
+
+            });
+
+        // check if the user is subscribed to the above channel
+        new_client_channel.bind('pusher:subscription_succeeded', function (members) {
+            console.log('successfully subscribed!');
+        });
+
+    </script>
+    <script>
+        /* ***************************************** */
+        /* Open chat prompt */
+        /* ***************************************** */
+        document.querySelector('#chat_btn').addEventListener('click', () => {
+            if (document.querySelector('#chat_btn').classList.contains('chat_c_opened')) {
+                document.querySelector('#chat_btn').classList.remove('chat_c_opened')
+                document.querySelector('.chat_container').classList.add('w-0', 'h-0', 'opacity-0')
+                document.querySelector('.chat_container').classList.remove('opacity-1', 'w-80', 'h-96')
+
+                /* Switch icons */
+                document.querySelector('#open_chat_img').classList.add('opacity-1', 'w-6', 'h-6')
+                document.querySelector('#open_chat_img').classList.remove('opacity-0', 'w-0', 'h-0')
+                document.querySelector('#close_chat_img').classList.remove('opacity-1', 'w-5', 'h-5')
+                document.querySelector('#close_chat_img').classList.add('opacity-0', 'w-0', 'h-0')
+            } else {
+                document.querySelector('#chat_btn').classList.add('chat_c_opened')
+                document.querySelector('.chat_container').classList.remove('w-0', 'h-0', 'opacity-0')
+                document.querySelector('.chat_container').classList.add('opacity-1', 'w-80', 'h-96')
+                /* Switch icons */
+                document.querySelector('#open_chat_img').classList.remove('opacity-1', 'w-6', 'h-6')
+                document.querySelector('#open_chat_img').classList.add('opacity-0', 'w-0', 'h-0')
+                document.querySelector('#close_chat_img').classList.add('opacity-1', 'w-5', 'h-5')
+                document.querySelector('#close_chat_img').classList.remove('opacity-0', 'w-0', 'h-0')
+            }
+
+        })
+        /* ***************************************** */
+        /* Ajax Call function */
+        /* ***************************************** */
+        function ajaxCall(ajax_url, ajax_data) {
+            fetch(ajax_url, {
+                mode: 'cors', credentials: 'same-origin',
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ajax_data)
+            })
+            /*  .then((response) => console.log(response))
+             .then((data) => console.log(data)); */
+        }
+        /* ***************************************** */
+        /* Request Chat */
+        /* ***************************************** */
+        document.querySelector('.request_chat').addEventListener('click', (e) => {
+            e.preventDefault();
+            let name = ""
+            let message = ""
+            message = document.querySelector('.chat_box .input_message').value
+            name = document.querySelector('.chat_box .input_name').value
+            // Validate Name field
+            /* if (name === '') {
+                bootbox.alert('<br /><p class = "bg-danger">Please enter a Name.</p>');
+            } */
+
+            if (message !== '') {
+                // Define ajax data
+                let chat_request = {
+                    type: 'request_chat',
+                    name: name,
+                    message: message,
+                    //private_channel: private_channel,
+                    private_event: private_event
+                }
+                // Send the message to the server passing File Url and chat person name & message
+                ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
+                document.querySelector('#request_window').style.display = "none"
+                document.querySelector('#chat_window').classList.remove('hidden')
+                document.querySelector('#chat_window').classList.add('flex')
+                //$('.messages_display').append('<p class = "message_item">' + name + ' : ' + message + '</p>');
+                /* Change this to a function => reusable component */
+                const chatRowClient = document.createElement('div')
+                chatRowClient.className = 'chat_row relative from_client flex mb-4'
+
+                const clientMsg = document.createElement('p')
+                clientMsg.innerText = 'Client : ' + message
+                clientMsg.className = 'pl-7'
+
+                chatRowClient.appendChild(clientMsg)
+
+                document.querySelector('.messages_display').appendChild(chatRowClient)
+
+
+
+
+
+                // Clear the message input field
+                //$('.chat_box .input_message').val('');
+            }
+        });
+        /* ***************************************** */
+        /* Chatting */
+        /* ***************************************** */
+        document.querySelector('.input_send').addEventListener('click', (e) => {
+            e.preventDefault();
+            let privateEvent = document.querySelector('.input_send').dataset.p_event
+            let message = document.querySelector('#chat_window .chat_message').value
+
+            if (message !== '') {
+                // Define ajax data
+                let chat_request = {
+                    from: 'client',
+                    type: 'private',
+                    name: name,
+                    message: message,
+                    private_event: privateEvent
+                }
+                ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
+                const chatRowClient = document.createElement('div')
+                chatRowClient.className = 'chat_row relative from_client flex mb-4'
+
+                const clientMsg = document.createElement('p')
+                clientMsg.innerText = 'Client : ' + message
+                clientMsg.className = 'pl-7'
+
+                chatRowClient.appendChild(clientMsg)
+
+                document.querySelector('.messages_display').appendChild(chatRowClient)
+            }
+        }).bind(this)
+
+    </script>
+
+</body>
+
+</html>
