@@ -1,0 +1,2 @@
+- Save the created private channel to database with user name and email and 
+  add it to localStorage

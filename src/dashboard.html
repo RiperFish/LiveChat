@@ -10,20 +10,21 @@
     <link href="../dist/output.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="dashboard">
 
-    <main class="relative overflow-hidden bg-gray-100 dashboard_wrapper">
-        <div class="flex text-sm">
+    <main class="relative h-screen bg-white bg-gradient-to-r from-teal-500 to-sky-400 dashboard_wrapper">
+        <div class="flex text-sm p-5 h-full max-w-7xl mx-auto">
             <!-- Navigation -->
-            <div class="relative my-4 ml-4 shadow-sm block w-80">
-                <div class=" bg-white rounded-md h-full">
+            <div
+                class="relative bg-white shadow-sm block w-64 rounded-tl-xl rounded-bl-xl rounded-tr-none h-full border-r">
+                <div class="h-full px-7">
                     <div class="pt-6">
                         <nav class="mt-6 tab">
                             <div>
-                                <a class="flex tablinks active items-center justify-start w-full p-4 my-2 font-medium text-blue-500 capitalize   bg-gradient-to-r from-white to-blue-100 "
+                                <a class="flex tablinks active items-center justify-start w-full p-4 my-2 text-black capitalize rounded-lg bg-gradient-to-r from-white to-blue-100 font-semibold"
                                     href="#" data-id="clients_chats_wrapper"
                                     onclick="openTab(event, 'clients_chats_wrapper')">
-                                    dashboard
+                                    Inbox
                                 </a>
                             </div>
                             <!-- <div>
@@ -37,9 +38,192 @@
 
                 </div>
             </div>
-            <div class="h-screen w-full pl-0 pt-4 pb-4 tabs_wrapper  grid grid-cols-3 tabcontent"
+            <div class=" w-full tabs_wrapper grid tabcontent overflow-hidden "
                 id="clients_chats_wrapper">
+                <div class="chat_list bg-white">
+                    <div class="header p-5 border-b border-b-gray-200">
+                        <h3 class="text-base font-semibold mb-1">Messages</h3>
+                        <!-- <span class="text-sm font-normal">Active</span> -->
+                    </div>
+                    <div class=" w-full p-3 chat_list_bubbles h-full ">
+                        <!--  <div class="bubble w-full bg-white mb-2 bg-opacity-80 rounded-lg relative p-4 cursor-pointer bubble_content"
+                            data-p_channel="xxx">
+                            <div class="bubble_avatar w-7 h-7 rounded-full bg-orange-300 bubble_content"></div>
+                            <div class="bubble_message  bubble_content">
+                                <h3 class="bubble_name font-semibold mb- bubble_content1">Mustapha Benfetta</h3>
+                                <p class="bubble__message_text font-thin text-gray-600 bubble_content">
+                                    Hi, you have cool work, i would like to know the cost for
+                                </p>
+                            </div>
+                        </div> -->
+                        <!--  -->
+                        <!--    <div class="bubble w-full bg-white mb-2 bg-opacity-80 rounded-lg relative p-4 cursor-pointer"
+                            data-p_channel="zzz">
+                            <div class="bubble_avatar w-7 h-7 rounded-full bg-orange-300"></div>
+                            <div class="bubble_message ">
+                                <h3 class="bubble_name font-semibold mb-1">Walid Benfetta</h3>
+                                <p class="bubble__message_text font-thin text-gray-600">
+                                    Hi, you have cool work, i would like to know the cost for
+                                </p>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+                <script>
+                    /* Function : Elements creation */
+                    function createBubble(name, message, channel) {
+                        let bubble = `
+                            <div class="bubble w-full bg-neutral-100 mb-2 bg-opacity-80 rounded-md relative p-3 cursor-pointer bubble_content"
+                                data-p_channel=${channel}>
+                                <div class="bubble_avatar w-7 h-7 rounded-full bg-orange-300 bubble_content" data-p_channel=${channel}></div>
+                                <div class="bubble_message  bubble_content" data-p_channel=${channel}>
+                                    <h3 class="bubble_name font-semibold mb-1 bubble_content text-xs" data-p_channel=${channel}>${name}</h3>
+                                    <p class="bubble__message_text font-normal text-gray-500 bubble_content" data-p_channel=${channel}>
+                                        ${message}
+                                    </p>
+                                </div>
+                            </div>
+                        `
+                        return bubble
+                    }
+                    function createClientChatBox(name, message, channel) {
+                        let c = `
+                        <div class="chat_box  relative pl-8 h-full" data-p_channel=${channel} id="chat_box_${channel}">
+                            <div class="messages_display h-full w-full text-left  overflow-y-scroll pb-32">
+                                <div class="chat_row relative from_client mb-2 pl-14">
+                                    <h3 class="text-sm font-normal text-gray-600">${name}</h3>
+                                    <div
+                                        class="chat__row_message border bg-opacity-40 p-2 px-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
+                                        <p>${message}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full sticky bottom-0 p-6 pl-0 pr-0 bg-white border-t flex items-end">
+                                <textarea class="border rounded-lg resize-none w-full operatorMessageReplay p-2" name="" id=""  rows="3"></textarea>
+                                <div onclick="operatorSendMessage('${channel}', '${message}')"
+                                    class="form-group input_send_holder  btn btn-primary btn-block input_send text-black rounded-md h-full text-xs p-2 cursor-pointer operatorReplayBtn" id="btn_${channel}" data-p_channel=${channel}>
+                                    <img class="w-7 operatorReplayBtn" id="btn_${channel}" src="../assets/icons/sendBlack.svg" alt="" srcset="" data-p_channel=${channel}>
+                                </div>
+                            </div>
+                        </div>    
+                        `
+                        return c
+                    }
+                    function createClientChatRown(name, message) {
+                        var r = `
+                            <div class="chat_row relative from_client mb-2 pl-14">
+                                <h3 class="text-sm font-normal text-gray-600">${name}</h3>
+                                <div
+                                    class="chat__row_message border p-2 pt-1.5 pr-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
+                                    <p>${message}</p>
+                                </div>
+                            </div>
+                        `
+                        return r
+                    }
+                    function createOperatorChatRown(name, message) {
+                        var o = `
+                            <div class="chat_row relative from_operator mb-2 pr-14 text-right mr-4">
+                                <h3 class="text-sm font-normal text-gray-600">You</h3>
+                                <div
+                                    class="chat__row_message bg-teal-500 bg-opacity-40 p-2 px-4 mt-1.5 rounded-tl-lg rounded-br-lg rounded-bl-lg inline-block">
+                                    ${message}
+                                </div>
+                            </div>
+                        `
+                        return o
+                    }
 
+                </script>
+                <div
+                    class="chat overflow-y-scroll relative w-full bg-white border-l pb border-l-gray-200 rounded-tr-xl rounded-br-xl flex flex-col">
+                    <div
+                        class="chat_header sticky top-0  z-50 bg-white w-full flex gap-3 items-center py-6 px-8 border-b border-b-gray-200">
+                        <div class="bubble_avatar w-8 h-8 rounded-full bg-orange-300"></div>
+                        <p class="text-base font-semibold"><span class="text-gray-500">Conversation with </span>Mustapha
+                            Benfetta</p>
+                    </div>
+                    <div class="chat__private_chat p-8 pb-0 pl-0 pr-4 h-full overflow-hidden">
+                        <!--       <div class="chat_box relative pl-8 h-full" data-p_channel=${channel} id=${channel}>
+                            <div class="messages_display h-full w-full text-left  overflow-y-scroll ">
+                                <div class="chat_row relative from_client mb-6 pl-16">
+                                    <h3 class="text-base font-semibold">${name}</h3>
+                                    <div
+                                        class="chat__row_message bg-emerald-200 bg-opacity-40 pt-3 p-4 mt-3 rounded-tr-2xl rounded-br-2xl rounded-bl-2xl inline-block">
+                                        <p>${message}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full sticky bottom-0 p-6 pl-0 pr-0 bg-white border-t flex items-end">
+                                <textarea class="border rounded-lg resize-none w-full " name="" id=""  rows="3"></textarea>
+                                <div
+                                    class="form-group input_send_holder  btn btn-primary btn-block input_send text-black rounded-md h-full text-xs p-2 cursor-pointer operatorReplay" id="btn_${channel}">
+                                    <img class="w-7 " src="../assets/icons/sendBlack.svg" alt="" srcset="">
+                                </div>
+                            </div>
+                        </div> -->
+                        <script>
+                            function operatorSendMessage(channel, message) {
+                                console.log(channel + "/" + message)
+                                let operatorMessage = document.querySelector('.chat__private_chat #chat_box_' + channel + ' .operatorMessageReplay').value
+                                let chat = {
+
+                                    from: 'operator',
+                                    name: "Bryan",
+                                    message: operatorMessage,
+                                    private_channel: channel
+                                }
+                                ajaxCall('chat.php', chat)
+                                document.querySelector('.chat__private_chat #chat_box_' + channel + ' .messages_display').innerHTML += createOperatorChatRown(name, operatorMessage, channel)
+
+                                document.querySelector('.chat__private_chat #chat_box_' + channel + ' .messages_display').scrollTop = document.querySelector('.chat__private_chat #chat_box_' + channel + ' .messages_display').scrollHeight
+                            }
+                        
+
+                        </script>
+                        <!--   <div class="chat_box h-full flex flex-col" data-p_channel="xxx" id="xxx">
+                            <div class="messages_display h-full w-full text-left  overflow-y-scroll ">
+                                <div class="chat_row relative from_client mb-6 pl-16">
+                                    <h3 class="text-base font-semibold">Mustapha Benfetta</h3>
+                                    <div
+                                        class="chat__row_message bg-emerald-200 bg-opacity-40 pt-3 p-4 mt-3 rounded-tr-2xl rounded-br-2xl rounded-bl-2xl inline-block">
+                                        <p>Hi, you have cool work, i would like to know the cost for</p>
+                                    </div>
+                                </div>
+                                <div class="chat_row relative from_operator mb-6 pr-16 text-right">
+                                    <h3 class="text-base font-semibold">Operator</h3>
+                                    <div
+                                        class="chat__row_message border pt-3 p-4 mt-3 rounded-tl-2xl rounded-br-2xl rounded-bl-2xl inline-block">
+                                        Hi, you have cool work, i would like to know the cost for
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full">
+                                <input type="text" class="border">
+                            </div>
+                        </div> -->
+                        <!--  -->
+                        <!--         <div class="chat_box hidden" data-p_channel="zzz" id="zzz">
+                            <div class="messages_display w-full text-left  overflow-y-scroll h-80 ">
+                                <div class="chat_row relative from_client mb-6 pl-16">
+                                    <h3 class="text-base font-semibold">Walid Benfetta</h3>
+                                    <div
+                                        class="chat__row_message bg-emerald-200 bg-opacity-40 pt-3 p-4 mt-3 rounded-tr-2xl rounded-br-2xl rounded-bl-2xl inline-block">
+                                        <p>Hi, you have cool work, i would like to know the cost for</p>
+                                    </div>
+                                </div>
+                                <div class="chat_row relative from_operator mb-6 pr-16 text-right">
+                                    <h3 class="text-base font-semibold">Walid Benfetta</h3>
+                                    <div
+                                        class="chat__row_message border pt-3 p-4 mt-3 rounded-tl-2xl rounded-br-2xl rounded-bl-2xl inline-block">
+                                        Hi, you have cool work, i would like to know the cost for
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+                </div>
             </div>
             <!--  <div class="h-screen w-full pl-0 pt-4 pb-4 tabcontent" id="test">
                 <h1>Hey</h1>
@@ -51,12 +235,7 @@
     <script>
         const dashboardWrapper = document.querySelector('.dashboard_wrapper')
         const tabsContentWrapper = document.querySelector('.tabs_wrapper')
-        //createNewClientTab("Mustapha", "ddd")
-        createNewClientTabContent("Mustapha", 'Mustaphas message', "ddd")
-
-        //createNewClientTab("Walid", "zzz")
-        createNewClientTabContent("Walid", 'Walids message', "zzz")
-        //createNewClientTabContent("name", "msg", "p_event")
+        //document.querySelector('.chat_list_bubbles').innerHTML += createBubble("Walid", "this is just test")
         /* ***************************************** */
         /* Ajax Call function */
         /* ***************************************** */
@@ -76,10 +255,10 @@
         /* ***************************************** */
         /* Create elements functions */
         /* ***************************************** */
-        function chatForm(name, p_event, first_msg) {
+        function chatForm(name, msg, channel) {
             const formWrapper = document.createElement("div");
             formWrapper.className = "chat_box"
-            formWrapper.dataset.p_event = p_event
+            formWrapper.dataset.p_channel = channel
 
             const messagesDisplay = document.createElement("div");
             messagesDisplay.className = "form-control messages_display w-full rounded-sm text-left p-2 border-l-2 px-4 pt-4 overflow-y-scroll h-80"
@@ -88,9 +267,9 @@
             chatRowClient.className = 'chat_row relative from_client flex mb-4 '
 
             const firstMsg = document.createElement('p')
-            firstMsg.innerText = first_msg
-            firstMsg.innerText = 'Client : ' + first_msg
-            firstMsg.className = 'pl-7 font-thin '
+            firstMsg.innerText = msg
+            firstMsg.innerText = 'Client : ' + msg
+            firstMsg.className = 'pl-7 '
 
             chatRowClient.appendChild(firstMsg)
             messagesDisplay.appendChild(chatRowClient)
@@ -112,11 +291,11 @@
             const sendMsgBtn = document.createElement("input");
             sendMsgBtn.className = "btn btn-primary btn-block input_send text-black rounded-md w-full h-full text-xs p-2 cursor-pointer"
             sendMsgBtn.onclick = function () {
-                btnSendMail_Click(name, p_event)
+                btnSendMail_Click(name, msg, channel)
             };
             sendMsgBtn.type = "submit"
             sendMsgBtn.value = "Send"
-            sendMsgBtn.dataset.p_event = p_event
+            sendMsgBtn.dataset.channel = channel
             wrapper2.appendChild(sendMsgBtn)
 
             formRow.appendChild(wrapper1)
@@ -126,18 +305,18 @@
             formWrapper.appendChild(formRow)
             return formWrapper
         }
-        function btnSendMail_Click(name, p_event) {
-            console.log('Client : ' + name + '; Event : ' + p_event);
-            let clientForm = document.querySelector('.tabcontent.form_' + p_event)
-            let operatorNewMessage = document.querySelector('.form_' + p_event + ' .input_message').value
-            let chat_request = {
+        function btnSendMail_Click(name, message, channel) {
+
+            let clientForm = document.querySelector('.tabcontent.form_' + channel)
+            let operatorNewMessage = document.querySelector('.form_' + channel + ' .input_message').value
+            let chat = {
+
                 from: 'operator',
-                type: 'private',
-                name: "operator",
+                name: "Bryan",
                 message: operatorNewMessage,
-                private_event: p_event
+                private_channel: channel
             }
-            //ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request)
+            ajaxCall('chat.php', chat)
             const chatRowOprator = document.createElement('div')
             chatRowOprator.className = 'chat_row relative from_operator flex mb-4 justify-end'
 
@@ -147,7 +326,7 @@
 
             chatRowOprator.appendChild(operatorMsg)
 
-            const clientOpWithClient = document.querySelector('.form_' + p_event + ' .messages_display')
+            const clientOpWithClient = document.querySelector('.form_' + channel + ' .messages_display')
             clientOpWithClient.appendChild(chatRowOprator)
             clientOpWithClient.lastChild.scrollIntoView();
             //clientOpWithClient.scrollTop = clientOpWithClient.scrollHeight - clientOpWithClient.clientHeight;
@@ -165,10 +344,10 @@
             tabElement.appendChild(clientBtn);
             document.querySelector(".tab").appendChild(tabElement);
         }
-        function createNewClientTabContent(name, msg, p_event) {
+        function createNewClientTabContent(name, msg, channel) {
 
             const tabContent = document.createElement("div");
-            tabContent.className = "mx-4 h-full bg-white shadow-sm rounded-md form_" + p_event
+            tabContent.className = "mx-4 h-full bg-white shadow-sm rounded-md form_" + channel
             tabContent.id = name + 'Tab'
 
             const tabContentHeader = document.createElement('div')
@@ -177,7 +356,7 @@
 
 
             tabContent.appendChild(tabContentHeader)
-            tabContent.appendChild(chatForm(name, p_event, msg))
+            tabContent.appendChild(chatForm(name, msg, channel))
 
 
             tabsContentWrapper.appendChild(tabContent);
@@ -210,50 +389,58 @@
         // Add API Key & cluster here to make the connection 
         var pusher = new Pusher('35475b12a7cc14bf25c9', {
             cluster: 'eu',
-            encrypted: true
+            encrypted: true,
+            authEndpoint: 'pusher_auth.php',
         });
 
         // Enter a unique channel you wish your users to be subscribed in.
-        var new_client_channel = pusher.subscribe('new_client_chat');
-
+        let privateChannels = []
+        const new_chat_channel = pusher.subscribe('new_client_chat');
+        const privateChatEvent = 'new_private_message'
+        let newPrivateChannel
         // bind the server event to get the response data and append it to the message div
-        new_client_channel.bind('new_client_chat_event',
+        new_chat_channel.bind('new_chat_event',
             function (data) {
-                console.log(data);
+                document.querySelector('.chat_list_bubbles').innerHTML += createBubble(data['name'], data['message'], data['private_channel'])
+                document.querySelector('.chat__private_chat').innerHTML += createClientChatBox(data['name'], data['message'], data['private_channel'])
+                newPrivateChannel = pusher.subscribe(data['private_channel'])
+                privateChannels.push(newPrivateChannel)
+                checkSubscriptionSuccess(data['name'], data['message'], newPrivateChannel)
 
-                if (data['type'] === "new") {
-                    //createNewClientTab(data['name'], data['private-event'])
-                    createNewClientTabContent(data['name'], data['message'], data['private-event'])
-                    //pusher.unsubscribe('new_client_chat');
-                }
-                new_client_channel.bind(data['private-event'],
-                    function (clientData) {
-                        //Receive message from client
-                        console.log(clientData);
-                        if (clientData['from'] === 'client' && clientData['private-event'] === data['private-event']) {
-                            const chatRowClient = document.createElement('div')
-                            chatRowClient.className = 'chat_row relative message_item from_client flex mb-4'
-
-                            const clientMsg = document.createElement('p')
-                            //clientMsg.innerText = first_msg
-                            clientMsg.innerText = 'Client : ' + clientData['message']
-                            clientMsg.className = 'pl-7'
-
-                            chatRowClient.appendChild(clientMsg)
-
-
-                            const clientOpWithClient = document.querySelector('.tabcontent.form_' + clientData['private-event'] + ' .messages_display')
-
-                            clientOpWithClient.appendChild(chatRowClient)
-                            clientOpWithClient.lastChild.scrollIntoView();
-                            //clientOpWithClient.scrollTop = clientOpWithClient.scrollHeight - clientOpWithClient.clientHeight;
-                        }
-                    });
             });
+
         // check if the user is subscribed to the above channel
-        new_client_channel.bind('pusher:subscription_succeeded', function (members) {
+        new_chat_channel.bind('pusher:subscription_succeeded', function (members) {
             console.log('successfully subscribed!');
         });
+
+        function checkSubscriptionSuccess(name, message, channel) {
+            channel.bind('pusher:subscription_succeeded', function (memberss) {
+                channel.bind(privateChatEvent,
+                    function (clientReply) {
+                        if (clientReply['from'] === 'client') {
+                            document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').innerHTML += createClientChatRown(name, clientReply['reply_message'], channel.name)
+
+                            document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').scrollTop = document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').scrollHeight
+                        }
+
+                    }
+                );
+            });
+        }
+
+        //document.querySelector('.chat_list_bubbles').innerHTML += createBubble("Walid", "this is just test", "xxx")
+        document.querySelector('.chat_list_bubbles').addEventListener('click', (e) => {
+            if (e.target.classList.contains('bubble_content')) {
+                document.querySelectorAll('.chat_box').forEach(z => {
+                    z.style.display = "none"
+                })
+                console.log(e.target.dataset.p_channel)
+                let chatId = "#chat_box_" + e.target.dataset.p_channel
+                document.querySelector(chatId).style.display = "block"
+            }
+        })
+
 
     </script>
 </body>

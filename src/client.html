@@ -10,7 +10,8 @@
 
 </head>
 
-<body class="client h-screen w-screen  bg-gradient-to-r from-cyan-500 to-blue-500">
+<body class="client h-screen w-screen   bg-teal-200">
+    <!-- bg-gradient-to-r from-teal-500 to-blue-400 -->
     <button
         class="text-black bg-blue-100 shadow-2xl rounded-full  w-14 h-14 fixed bottom-3 right-2 flex items-center justify-center"
         id="chat_btn">
@@ -22,18 +23,17 @@
             Welcome, if you need help, start a new conversation, we are online and ready to help.
         </span>
     </button>
-
-
     <!--  -->
     <!--  -->
     <div
-        class="fixed bottom-20 right-2 w-0 h-0 shadow-sm rounded-lg text-white text-center transition-all duration-500 origin-bottom-right bg-white opacity-0 flex flex-col overflow-hidden chat_container">
-        <div class="window_header w-full bg-green-600 rounded-tl-md rounded-tr-md py-2">
+        class="fixed bottom-20 right-2 rounded-2xl text-white font-semibold text-center transition-all duration-500 origin-bottom-right bg-white  flex flex-col overflow-hidden chat_container w-80 h-96 opacity-1 shadow-lg">
+        <div class="window_header w-full  bg-gradient-to-r from-teal-500 to-sky-400 rounded-tl-md rounded-tr-md py-2">
             <h3>Live chat support</h3>
         </div>
-        <div class=" text-black text-xs text-left h-full">
+        <div class=" text-black text-xs text-left h-full font-normal">
             <!-- Request Chat  -->
-            <div class="chat_box text-black text-sm p-4" id="request_window">
+            <div class="chat_box text-black text-sm p-4 transition-all duration-400 w-full origin-top"
+                id="request_window">
                 <p class="mb-3 availability_notice"></p>
                 <!-- You will be connected to a manager if one is available, otherwise, we will contact you by email. -->
                 <div class="form-group border rounded-md mb-3">
@@ -48,14 +48,19 @@
                     <textarea class="input_message form-control w-full p-2 pt-2 rounded-md text-black text-xs"
                         placeholder="Enter Message" rows="5" value="Test message"></textarea>
                 </div>
-                <div class="form-group input_send_holder mt-3 rounded-md">
-                    <input type="submit" value="Start conversation"
-                        class="btn btn-primary btn-block request_chat text-black border rounded-md w-full text-xs pb-1 pt-1 cursor-pointer" />
+                <div
+                    class="form-group input_send_holder mt-3 relative btn btn-primary btn-block font-semibold text-sm request_chat text-white border rounded-full w-full pt-2 pb-2 cursor-pointer bg-gradient-to-r from-teal-500 to-blue-400 text-center">
+                    <img class="absolute right-5 top-1/2 -translate-y-1/2" src="../assets/icons/send.svg" alt=""
+                        srcset="">
+                    <span>Start conversation</span>
+                    <!-- <input type="submit" value="Start conversation"
+                        class="btn btn-primary btn-block font-semibold text-sm request_chat text-white border rounded-full w-full pt-2 pb-2 cursor-pointer bg-gradient-to-r from-teal-500 to-blue-400" /> -->
                 </div>
             </div>
             <!-- Chat -->
-            <div class="form_container w-full h-full flex-col text-black text-xs hidden " id="chat_window">
-                <div class="form-control messages_display w-full  text-left p-2  px-4 pt-4 overflow-y-scroll">
+            <div class="form_container h-full flex-col text-black text-xs transition-all duration-400 w-0"
+                id="chat_window">
+                <div class="form-control messages_display w-full  text-left p-2  px-4 pt-4 overflow-y-scroll border-b">
                     <!-- <div class="chat_row relative from_client flex mb-4">
                         <p class="pl-7">hello, i can't do updates</p>
                     </div>
@@ -63,14 +68,16 @@
                         <p class="pr-7">hello, how i may help you</p>
                     </div> -->
                 </div>
-                <div class="flex">
+                <div class="flex pl-3">
                     <div class="form-group rounded-md flex-1">
-                        <input class="chat_message rounded-md w-full p-2 text-xs outline-none"
+                        <input class="chat_message rounded-md w-full p-2 pl-0 text-xs outline-none"
                             placeholder="Enter Message" rows="3" value="Test message"></input>
                     </div>
-                    <div class="form-group input_send_holder rounded-md ">
-                        <input type="submit" value="Send"
-                            class="btn btn-primary btn-block input_send text-black rounded-md w-full h-full text-xs p-2 cursor-pointer " />
+                    <div
+                        class="form-group input_send_holder  btn btn-primary btn-block input_send text-black rounded-md h-full text-xs p-2 cursor-pointer ">
+                        <img src="../assets/icons/sendBlack.svg" alt="" srcset="">
+                        <!-- <input type="submit" value="Send"
+                            class="btn btn-primary btn-block input_send text-black rounded-md w-full h-full text-xs p-2 cursor-pointer " /> -->
                     </div>
                 </div>
 
@@ -79,42 +86,67 @@
     </div>
     <!-- Pusher initialisation -->
     <script>
-        let private_event
+        let private_event, privateChannelName
         window.addEventListener('load', function () {
+            function createOperatorChatRown(name, message) {
+                var o = `
+                            <div class="chat_row relative from_operator mb-2 pr-12 text-right">
+                                <h3 class="text-sm font-normal text-gray-600">You</h3>
+                                <div
+                                    class="chat__row_message bg-teal-500 bg-opacity-40 p-2 px-4 mt-1.5 rounded-tl-lg rounded-br-lg rounded-bl-lg inline-block">
+                                    ${message}
+                                </div>
+                            </div>
+                        `
+                return o
+            }
+            function createClientChatRown(name, message) {
+                var r = `
+                            <div class="chat_row relative from_client mb-2 pl-12">
+                                    <h3 class="text-sm font-normal text-gray-600">${name}</h3>
+                                    <div
+                                        class="chat__row_message border p-2 pt-1.5 pr-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
+                                        <p>${message}</p>
+                                    </div>
+                                </div>
+                            `
+                return r
+            }
             // Add API Key & cluster here to make the connection 
             var pusher = new Pusher('35475b12a7cc14bf25c9', {
                 cluster: 'eu',
-                encrypted: true
+                encrypted: true,
+                authEndpoint: 'pusher_auth.php',
             });
+
             const clientId = Math.floor(Math.random() * 100000000000)
             private_event = 'private' + clientId + '_event'
-            let new_client_channel = pusher.subscribe('new_client_chat');
-            document.querySelector('.input_send').dataset.p_event = private_event
+            privateChannelName = 'private-c-' + clientId
+            const new_chat_channel = pusher.subscribe('private-c-new_client_chat');
+            const clientPrivateChannel = pusher.subscribe(privateChannelName);
             // bind the server event to get the response data and append it to the message div
-            new_client_channel.bind(private_event,
+            new_chat_channel.bind('new_chat_event',
                 function (operatorData) {
                     console.log(operatorData);
-                    if (operatorData['from'] === 'operator' && operatorData['private-event'] === private_event) {
-                        const chatRow = document.createElement('div')
-                        chatRow.className = 'chat_row from_operator relative flex justify-end align-middle mb-4'
-
-                        const operatorMsg = document.createElement('p')
-                        operatorMsg.innerText = 'Operator : ' + operatorData['message']
-                        operatorMsg.className = 'pr-7 font-thin'
-
-                        chatRow.appendChild(operatorMsg)
-
-                        document.querySelector('.messages_display').appendChild(chatRow)
-                        document.querySelector('.messages_display').lastChild.scrollIntoView();
-                        //$('.messages_display').append('<p class = "message_item from_operator">Operator : ' + data['message'] + '</p>');
-                    }
-
                 });
 
             // check if the user is subscribed to the above channel
-            new_client_channel.bind('pusher:subscription_succeeded', function (members) {
+            new_chat_channel.bind('pusher:subscription_succeeded', function (members) {
                 console.log('successfully subscribed!');
             });
+            clientPrivateChannel.bind('pusher:subscription_succeeded', function (members) {
+                console.log('successfully subscribed! : ' + privateChannelName);
+            });
+            clientPrivateChannel.bind('new_private_message',
+                function (operatorReply) {
+                    if (operatorReply['from'] === 'operator') {
+                        document.querySelector('.messages_display').innerHTML += createOperatorChatRown('Operator', operatorReply['reply_message'])
+
+                        document.querySelector('.messages_display').scrollTop = document.querySelector('.messages_display').scrollHeight
+
+                    }
+                }
+            );
         })
     </script>
     <script>
@@ -122,16 +154,18 @@
             let canChat = false
             checkIfOperatorIsAvailable('op_status.php')
 
+
             /* ***************************************** */
             /* Open chat prompt */
             /* ***************************************** */
             document.querySelector('#chat_btn').addEventListener('click', () => {
+                // document.querySelector('.chat_container').classList.add('w-0', 'h-0', 'opacity-0')
                 if (document.querySelector('#chat_btn').classList.contains('chat_c_opened')) {
                     document.querySelector('#chat_btn').classList.remove('chat_c_opened')
                     document.querySelector('.chat_container').classList.add('w-0', 'h-0', 'opacity-0')
                     document.querySelector('.chat_container').classList.remove('opacity-1', 'w-80', 'h-96')
 
-                    /* Switch icons */
+                    //Switch icons
                     document.querySelector('#open_chat_img').classList.add('opacity-1', 'w-6', 'h-6')
                     document.querySelector('#open_chat_img').classList.remove('opacity-0', 'w-0', 'h-0')
                     document.querySelector('#close_chat_img').classList.remove('opacity-1', 'w-5', 'h-5')
@@ -140,7 +174,7 @@
                     document.querySelector('#chat_btn').classList.add('chat_c_opened')
                     document.querySelector('.chat_container').classList.remove('w-0', 'h-0', 'opacity-0')
                     document.querySelector('.chat_container').classList.add('opacity-1', 'w-80', 'h-96')
-                    /* Switch icons */
+                    //Switch icons
                     document.querySelector('#open_chat_img').classList.remove('opacity-1', 'w-6', 'h-6')
                     document.querySelector('#open_chat_img').classList.add('opacity-0', 'w-0', 'h-0')
                     document.querySelector('#close_chat_img').classList.add('opacity-1', 'w-5', 'h-5')
@@ -161,7 +195,7 @@
                             document.querySelector('.tooltiptext').classList.add('available')
                             document.querySelector('.availability_notice').innerText = "We are online, simply start a new conversation"
                             canChat = true
-                        }else{
+                        } else {
                             document.querySelector('.availability_notice').innerText = "Please fill out the form below and we will get back to you as soon as possible."
                             document.querySelector('.request_chat').value = "Submit"
                         }
@@ -185,6 +219,7 @@
             /* ***************************************** */
             document.querySelector('.request_chat').addEventListener('click', (e) => {
                 e.preventDefault();
+                console.log("re")
                 let name = ""
                 let message = ""
                 message = document.querySelector('.chat_box .input_message').value
@@ -197,31 +232,40 @@
                 if (message !== '') {
                     // Define ajax data
                     let chat_request = {
-                        type: 'request_chat',
+                        event: 'new_chat_event',
                         name: name,
                         message: message,
-                        //private_channel: private_channel,
+                        private_channel: privateChannelName,
                         private_event: private_event
                     }
                     /* If operator is available and canChat = true */
                     if (canChat == true) {
-                        //ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
-                        document.querySelector('#request_window').style.display = "none"
-                        document.querySelector('#chat_window').classList.remove('hidden')
-                        document.querySelector('#chat_window').classList.add('flex')
-                        //$('.messages_display').append('<p class = "message_item">' + name + ' : ' + message + '</p>');
+                        ajaxCall('request_chat.php', chat_request);
+                        //document.querySelector('#request_window').style.display = "none"
+                        document.querySelector('#request_window').style.width = "0"
+                        document.querySelector('#request_window').style.height = "0"
+                        document.querySelector('#request_window').style.padding = "0"
+                        document.querySelector('#request_window').style.overflow = "hidden"
+                        document.querySelector('#request_window').style.opacity = "0"
+                        setTimeout(() => {
+                            document.querySelector('#request_window').style.display = "none"
+                        }, 500);
+                        document.querySelector('#chat_window').style.width = "100%"
+
+
                         /* Change this to a function => reusable component */
-                        const chatRowClient = document.createElement('div')
-                        chatRowClient.className = 'chat_row relative from_client flex mb-4'
+                        /*      const chatRowClient = document.createElement('div')
+                             chatRowClient.className = 'chat_row relative from_client flex mb-4'
+     
+                             const clientMsg = document.createElement('p')
+                             clientMsg.innerText = 'Client : ' + message
+                             clientMsg.className = 'pl-7'
+     
+                             chatRowClient.appendChild(clientMsg) */
 
-                        const clientMsg = document.createElement('p')
-                        clientMsg.innerText = 'Client : ' + message
-                        clientMsg.className = 'pl-7'
-
-                        chatRowClient.appendChild(clientMsg)
-
-                        document.querySelector('.messages_display').appendChild(chatRowClient)
-                    }else{
+                        document.querySelector('.messages_display').innerHTML += createClientChatRown(name, message)
+                        //document.querySelector('.messages_display').appendChild(chatRowClient)
+                    } else {
                         console.log("no one available")
                     }
 
@@ -230,6 +274,8 @@
                     //$('.chat_box .input_message').val('');
                 }
             });
+            /* Functions */
+
             /* ***************************************** */
             /* Chatting */
             /* ***************************************** */
@@ -237,29 +283,27 @@
             document.querySelector('.input_send').addEventListener('click', (e) => {
                 e.preventDefault();
                 let privateEvent = document.querySelector('.input_send').dataset.p_event
-                let message = document.querySelector('#chat_window .chat_message').value
-                console.log(message)
-                if (message !== '') {
+                let clientMessage = document.querySelector('#chat_window .chat_message').value
+                let name = document.querySelector('.chat_box .input_name').value
+
+                if (clientMessage !== '') {
                     // Define ajax data
-                    let chat_request = {
-                        from: 'client',
-                        type: 'private',
+                    /*  let chat_request = {
+                         from: 'client',
+                         type: 'private',
+                         name: name,
+                         message: message,
+                         private_event: privateEvent
+                     } */
+                    let chat = {
+                        from: "client",
                         name: name,
-                        message: message,
-                        private_event: privateEvent
+                        message: clientMessage,
+                        private_channel: privateChannelName
                     }
-                    //ajaxCall('http://landingpage.lt/mustadev/chat/src/request_chat.php', chat_request);
-                    const chatRowClient = document.createElement('div')
-                    chatRowClient.className = 'chat_row relative from_client flex mb-4'
-
-                    const clientMsg = document.createElement('p')
-                    clientMsg.innerText = 'Client : ' + message
-                    clientMsg.className = 'pl-7'
-
-                    chatRowClient.appendChild(clientMsg)
-
-                    document.querySelector('.messages_display').appendChild(chatRowClient)
-                    document.querySelector('.messages_display').lastChild.scrollIntoView();
+                    ajaxCall('chat.php', chat);
+                    document.querySelector('.messages_display').innerHTML += createClientChatRown(name, clientMessage)
+                    document.querySelector('.messages_display').scrollTop = document.querySelector('.messages_display').scrollHeight
                 }
             })
             /* } */
