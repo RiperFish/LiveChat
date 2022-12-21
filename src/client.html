@@ -86,10 +86,8 @@
     </div>
     <!-- Pusher initialisation -->
     <script>
-        let private_event, privateChannelName
-        window.addEventListener('load', function () {
-            function createOperatorChatRown(name, message) {
-                var o = `
+        function createOperatorChatRown(name, message) {
+            var o = `
                             <div class="chat_row relative from_operator mb-2 pr-12 text-right">
                                 <h3 class="text-sm font-normal text-gray-600">You</h3>
                                 <div
@@ -98,10 +96,10 @@
                                 </div>
                             </div>
                         `
-                return o
-            }
-            function createClientChatRown(name, message) {
-                var r = `
+            return o
+        }
+        function createClientChatRown(name, message) {
+            var r = `
                             <div class="chat_row relative from_client mb-2 pl-12">
                                     <h3 class="text-sm font-normal text-gray-600">${name}</h3>
                                     <div
@@ -110,8 +108,11 @@
                                     </div>
                                 </div>
                             `
-                return r
-            }
+            return r
+        }
+        let private_event, privateChannelName
+        window.addEventListener('load', function () {
+
             // Add API Key & cluster here to make the connection 
             var pusher = new Pusher('35475b12a7cc14bf25c9', {
                 cluster: 'eu',
@@ -186,6 +187,17 @@
             /* ***************************************** */
             /* Ajax Call function */
             /* ***************************************** */
+            function checkUserTyping(ajax_url) {
+                fetch(ajax_url, {
+                    mode: 'cors', credentials: 'same-origin',
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(ajax_data)
+                })
+            }
             function checkIfOperatorIsAvailable(ajax_url) {
                 fetch(ajax_url)
                     .then(response => response.json())
@@ -306,7 +318,32 @@
                     document.querySelector('.messages_display').scrollTop = document.querySelector('.messages_display').scrollHeight
                 }
             })
+            let name = document.querySelector('.chat_box .input_name').value
             /* } */
+            var delay = (() => {
+                var timer = 0;
+                return (callback, ms) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })()
+            let x = {
+                from: "client",
+                name: name,
+                private_channel: privateChannelName,
+                action: ""
+            }
+            document.querySelector('#chat_window .chat_message').addEventListener('keydown', () => {
+                x['action'] = "keypress"
+                ajaxCall('typing.php', x);
+                delay(() => {
+                    x['action'] = "keyup"
+                    console.log('this will hit, once user has not typed for 1 second');
+                    ajaxCall('typing.php', x);
+                }, 500);
+
+            })
+
 
         })
     </script>

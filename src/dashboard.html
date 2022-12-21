@@ -38,8 +38,7 @@
 
                 </div>
             </div>
-            <div class=" w-full tabs_wrapper grid tabcontent overflow-hidden "
-                id="clients_chats_wrapper">
+            <div class=" w-full tabs_wrapper grid tabcontent overflow-hidden " id="clients_chats_wrapper">
                 <div class="chat_list bg-white">
                     <div class="header p-5 border-b border-b-gray-200">
                         <h3 class="text-base font-semibold mb-1">Messages</h3>
@@ -99,6 +98,7 @@
                                 </div>
                             </div>
                             <div class="w-full sticky bottom-0 p-6 pl-0 pr-0 bg-white border-t flex items-end">
+                                <span class="client_typing"></span>
                                 <textarea class="border rounded-lg resize-none w-full operatorMessageReplay p-2" name="" id=""  rows="3"></textarea>
                                 <div onclick="operatorSendMessage('${channel}', '${message}')"
                                     class="form-group input_send_holder  btn btn-primary btn-block input_send text-black rounded-md h-full text-xs p-2 cursor-pointer operatorReplayBtn" id="btn_${channel}" data-p_channel=${channel}>
@@ -143,7 +143,7 @@
                         <p class="text-base font-semibold"><span class="text-gray-500">Conversation with </span>Mustapha
                             Benfetta</p>
                     </div>
-                    <div class="chat__private_chat p-8 pb-0 pl-0 pr-4 h-full overflow-hidden">
+                    <div class="chat__private_chat p-8 pb-0 pl-0 pr-4 h-full overflow-hidden pb">
                         <!--       <div class="chat_box relative pl-8 h-full" data-p_channel=${channel} id=${channel}>
                             <div class="messages_display h-full w-full text-left  overflow-y-scroll ">
                                 <div class="chat_row relative from_client mb-6 pl-16">
@@ -178,7 +178,7 @@
 
                                 document.querySelector('.chat__private_chat #chat_box_' + channel + ' .messages_display').scrollTop = document.querySelector('.chat__private_chat #chat_box_' + channel + ' .messages_display').scrollHeight
                             }
-                        
+
 
                         </script>
                         <!--   <div class="chat_box h-full flex flex-col" data-p_channel="xxx" id="xxx">
@@ -420,12 +420,27 @@
                     function (clientReply) {
                         if (clientReply['from'] === 'client') {
                             document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').innerHTML += createClientChatRown(name, clientReply['reply_message'], channel.name)
-
+                            /* Clear the user is typing */
+                            document.querySelector('.chat__private_chat #chat_box_' + xxx['channel'] + ' .client_typing').innerText = ""
+                            /* Pin the scroll to the bottom */
                             document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').scrollTop = document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').scrollHeight
                         }
 
                     }
                 );
+                channel.bind('user_is_typing_event', (xxx) => {
+
+                    if (xxx['action'] === "keypress") {
+                        console.log(xxx['name'] + " is typing")
+                        document.querySelector('.chat__private_chat #chat_box_' + xxx['channel'] + ' .client_typing').innerText = xxx['name'] + " is typing"
+                    }
+                    if (xxx['action'] === "keyup") {
+                        console.log(xxx['name'] + "has done typing")
+                        document.querySelector('.chat__private_chat #chat_box_' + xxx['channel'] + ' .client_typing').innerText = ""
+
+
+                    }
+                })
             });
         }
 

@@ -1,0 +1,11 @@
+const inText = document.getElementById('inText')
+const outText = document.getElementById('outText')
+const delay = 1000
+
+let timer
+inText.addEventListener('input', code => {
+  clearTimeout(timer);
+  timer = setTimeout(x => {
+    outText.innerHTML = inText.value
+  }, delay, code)
+})
