@@ -89,7 +89,7 @@
         function createOperatorChatRown(name, message) {
             var o = `
                             <div class="chat_row relative from_operator mb-2 pr-12 text-right">
-                                <h3 class="text-sm font-normal text-gray-600">You</h3>
+                                <h3 class="text-sm font-normal text-gray-600">Operator</h3>
                                 <div
                                     class="chat__row_message bg-teal-500 bg-opacity-40 p-2 px-4 mt-1.5 rounded-tl-lg rounded-br-lg rounded-bl-lg inline-block">
                                     ${message}
@@ -101,7 +101,7 @@
         function createClientChatRown(name, message) {
             var r = `
                             <div class="chat_row relative from_client mb-2 pl-12">
-                                    <h3 class="text-sm font-normal text-gray-600">${name}</h3>
+                                    <h3 class="text-sm font-normal text-gray-600">You</h3>
                                     <div
                                         class="chat__row_message border p-2 pt-1.5 pr-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
                                         <p>${message}</p>
@@ -340,7 +340,7 @@
                     x['action'] = "keyup"
                     console.log('this will hit, once user has not typed for 1 second');
                     ajaxCall('typing.php', x);
-                }, 500);
+                }, 700);
 
             })
 

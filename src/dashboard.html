@@ -12,16 +12,17 @@
 
 <body class="dashboard">
 
-    <main class="relative h-screen bg-white bg-gradient-to-r from-teal-500 to-sky-400 dashboard_wrapper">
+    <main class="relative h-screen bg-white  dashboard_wrapper">
+        <!-- bg-gradient-to-r from-teal-500 to-sky-400 -->
         <div class="flex text-sm p-5 h-full max-w-7xl mx-auto">
             <!-- Navigation -->
             <div
-                class="relative bg-white shadow-sm block w-64 rounded-tl-xl rounded-bl-xl rounded-tr-none h-full border-r">
-                <div class="h-full px-7">
+                class="relative bg-white block w-64 border border-l-0 shadow-sm rounded-tl-xl rounded-bl-xl rounded-tr-none h-full border-r">
+                <div class="h-full px-4">
                     <div class="pt-6">
                         <nav class="mt-6 tab">
-                            <div>
-                                <a class="flex tablinks active items-center justify-start w-full p-4 my-2 text-black capitalize rounded-lg bg-gradient-to-r from-white to-blue-100 font-semibold"
+                            <div class="">
+                                <a class="flex tablinks active items-center justify-start w-full p-2 px-4 my-2 text-black capitalize   font-semibold"
                                     href="#" data-id="clients_chats_wrapper"
                                     onclick="openTab(event, 'clients_chats_wrapper')">
                                     Inbox
@@ -38,7 +39,8 @@
 
                 </div>
             </div>
-            <div class=" w-full tabs_wrapper grid tabcontent overflow-hidden " id="clients_chats_wrapper">
+            <div class=" w-full tabs_wrapper grid tabcontent overflow-hidden border border-l-0 shadow-sm rounded-lg rounded-tl-none rounded-bl-none"
+                id="clients_chats_wrapper">
                 <div class="chat_list bg-white">
                     <div class="header p-5 border-b border-b-gray-200">
                         <h3 class="text-base font-semibold mb-1">Messages</h3>
@@ -72,11 +74,11 @@
                     /* Function : Elements creation */
                     function createBubble(name, message, channel) {
                         let bubble = `
-                            <div class="bubble w-full bg-neutral-100 mb-2 bg-opacity-80 rounded-md relative p-3 cursor-pointer bubble_content"
+                            <div class="bubble w-full bg-neutral-100 mb-2 bg-opacity-60 rounded-md relative p-3 cursor-pointer bubble_content"
                                 data-p_channel=${channel}>
-                                <div class="bubble_avatar w-7 h-7 rounded-full bg-orange-300 bubble_content" data-p_channel=${channel}></div>
+                                <div class="bubble_avatar w-7 h-7 rounded-full bg-gray-300 bubble_content" data-p_channel=${channel}></div>
                                 <div class="bubble_message  bubble_content" data-p_channel=${channel}>
-                                    <h3 class="bubble_name font-semibold mb-1 bubble_content text-xs" data-p_channel=${channel}>${name}</h3>
+                                    <h3 class="bubble_name font-normal mb-1 bubble_content text-sm text-gray-800" data-p_channel=${channel}>${name}</h3>
                                     <p class="bubble__message_text font-normal text-gray-500 bubble_content" data-p_channel=${channel}>
                                         ${message}
                                     </p>
@@ -90,19 +92,21 @@
                         <div class="chat_box  relative pl-8 h-full" data-p_channel=${channel} id="chat_box_${channel}">
                             <div class="messages_display h-full w-full text-left  overflow-y-scroll pb-32">
                                 <div class="chat_row relative from_client mb-2 pl-14">
-                                    <h3 class="text-sm font-normal text-gray-600">${name}</h3>
+                                    <h3 class="text-sm font-normal text-gray-800">${name}</h3>
                                     <div
-                                        class="chat__row_message border bg-opacity-40 p-2 px-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
+                                        class="chat__row_message bg-neutral-100 bg-opacity-60 p-2 px-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
                                         <p>${message}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-full sticky bottom-0 p-6 pl-0 pr-0 bg-white border-t flex items-end">
-                                <span class="client_typing"></span>
-                                <textarea class="border rounded-lg resize-none w-full operatorMessageReplay p-2" name="" id=""  rows="3"></textarea>
-                                <div onclick="operatorSendMessage('${channel}', '${message}')"
-                                    class="form-group input_send_holder  btn btn-primary btn-block input_send text-black rounded-md h-full text-xs p-2 cursor-pointer operatorReplayBtn" id="btn_${channel}" data-p_channel=${channel}>
-                                    <img class="w-7 operatorReplayBtn" id="btn_${channel}" src="../assets/icons/sendBlack.svg" alt="" srcset="" data-p_channel=${channel}>
+                            <div class="w-full sticky bottom-0 p-6 pl-0 pr-0 bg-white flex flex-col pt-1">
+                                <span class="client_typing pb-2 text-gray-500 text-sm"></span>
+                                <div class="flex items-end">
+                                    <textarea class="border rounded-lg resize-none w-full operatorMessageReplay p-2" name="" id=""  rows="3" placeholder="Send a message"></textarea>
+                                    <div onclick="operatorSendMessage('${channel}', '${message}')"
+                                        class="form-group input_send_holder  btn btn-primary btn-block input_send text-black rounded-md h-full text-xs p-2 cursor-pointer operatorReplayBtn" id="btn_${channel}" data-p_channel=${channel}>
+                                        <img class="w-7 operatorReplayBtn" id="btn_${channel}" src="../assets/icons/sendBlack.svg" alt="" srcset="" data-p_channel=${channel}>
+                                    </div>
                                 </div>
                             </div>
                         </div>    
@@ -112,22 +116,29 @@
                     function createClientChatRown(name, message) {
                         var r = `
                             <div class="chat_row relative from_client mb-2 pl-14">
-                                <h3 class="text-sm font-normal text-gray-600">${name}</h3>
+                                <h3 class="text-sm font-normal text-gray-800">${name}</h3>
                                 <div
-                                    class="chat__row_message border p-2 pt-1.5 pr-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
+                                    class="chat__row_message bg-neutral-100 bg-opacity-60 p-2 pb-3 px-4 mt-1.5 rounded-tr-lg rounded-br-lg rounded-bl-lg inline-block">
                                     <p>${message}</p>
                                 </div>
                             </div>
                         `
                         return r
                     }
+                    const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                    const d = new Date()
                     function createOperatorChatRown(name, message) {
                         var o = `
-                            <div class="chat_row relative from_operator mb-2 pr-14 text-right mr-4">
-                                <h3 class="text-sm font-normal text-gray-600">You</h3>
+                            <div class="chat_row relative from_operator mb-2 pr-4 text-right">
+                                
                                 <div
-                                    class="chat__row_message bg-teal-500 bg-opacity-40 p-2 px-4 mt-1.5 rounded-tl-lg rounded-br-lg rounded-bl-lg inline-block">
-                                    ${message}
+                                    class="chat__row_message  inline-block">
+                                    <h3 class="text-sm font-normal text-gray flex justify-between items-end">You 
+                                        <span class="time_sent">
+                                            ${d.toLocaleString('en-US', {day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}
+                                        </span>
+                                        </h3>
+                                    <p class="bg-teal-500 text-white text-left text-sm p-2 pb-3 px-4 mt-1.5 rounded-tl-lg rounded-br-lg rounded-bl-lg">${message}</>
                                 </div>
                             </div>
                         `
@@ -139,7 +150,7 @@
                     class="chat overflow-y-scroll relative w-full bg-white border-l pb border-l-gray-200 rounded-tr-xl rounded-br-xl flex flex-col">
                     <div
                         class="chat_header sticky top-0  z-50 bg-white w-full flex gap-3 items-center py-6 px-8 border-b border-b-gray-200">
-                        <div class="bubble_avatar w-8 h-8 rounded-full bg-orange-300"></div>
+                        <div class="bubble_avatar w-8 h-8 rounded-full bg-gray-300"></div>
                         <p class="text-base font-semibold"><span class="text-gray-500">Conversation with </span>Mustapha
                             Benfetta</p>
                     </div>
@@ -421,9 +432,10 @@
                         if (clientReply['from'] === 'client') {
                             document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').innerHTML += createClientChatRown(name, clientReply['reply_message'], channel.name)
                             /* Clear the user is typing */
-                            document.querySelector('.chat__private_chat #chat_box_' + xxx['channel'] + ' .client_typing').innerText = ""
+                            //document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .client_typing').innerText = ""
                             /* Pin the scroll to the bottom */
                             document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').scrollTop = document.querySelector('.chat__private_chat #chat_box_' + channel.name + ' .messages_display').scrollHeight
+
                         }
 
                     }

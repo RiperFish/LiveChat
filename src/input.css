@@ -11,8 +11,8 @@
 }
 
 .bubble {
-    display: grid;
-    grid-template-columns: 13% 86%;
+    display: flex;
+    gap: 2.5%;
 }
 
 #chat_btn .tooltiptext {
@@ -72,22 +72,21 @@
     height: 300px;
 }
 
-.messages_display .from_operator::before {
-    content: "";
-    /* background-image: url(../assets/icons/operator.svg); */
-    background-position: center;
-    background-color: #FDBA74;
-    border-radius: 100px;
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    right: 0;
+.dashboard .chat__row_message {
+    max-width: 70%;
+    width: 70%;
+}
+
+.dashboard .chat__row_message .time_sent {
+    font-size: 10px;
+    font-weight: 600;
+    color: #05916a;
 }
 
 .messages_display .from_client::before {
     content: "";
     /* background-image: url(../assets/icons/client.svg); */
-    background-color: #FDBA74;
+    background-color: rgba(209, 209, 209, 0.294);
     background-position: center;
     border-radius: 100px;
     width: 40px;
@@ -96,6 +95,19 @@
     left: 0;
 
 }
+
+.client .messages_display .from_operator::before {
+    content: "";
+    background-position: center;
+    background-color: rgba(209, 209, 209, 0.294);
+    border-radius: 100px;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 0;
+}
+
+
 
 .client .messages_display .from_client::before {
     content: "";
@@ -143,5 +155,6 @@
 
 .tablinks.active {
 
-    border-right: 4px solid #7DADF9;
+    background-color: rgba(209, 209, 209, 0.294);
+    border-radius: 4px;
 }

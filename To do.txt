@@ -5,3 +5,4 @@
 - Save messages to database and add a section for old messages on the dashboard
 - Change the bubble message to the latest message received
 - When client typing maybe show on the bubble that a client is typing
+- On dashboard, give clientChaRow a fixed width
